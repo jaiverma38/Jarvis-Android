@@ -70,7 +70,15 @@ jobs:
         run: |
           cd "$PROJECT_DIR"
           chmod +x ./gradlew
-          ./gradlew --no-daemon assembleDebug
+          ./gradlew --no-daemon assembleDebug 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      # Only runs when the build failed: shows just the error lines, short enough for one phone screen.
+      - name: Show errors only
+        if: failure()
+        run: |
+          echo "===== ERRORS ====="
+          grep -E "^e: |error:|What went wrong|Could not|Unresolved|FAILED" "$RUNNER_TEMP/build.log" \
+            | sed -E 's#file:///[^ ]*/app/src/#app/src/#' | cut -c1-230 | head -40 || true
 
       - name: Publish APK on the Releases page
         env:
