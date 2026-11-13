@@ -67,6 +67,7 @@ jobs:
           ls -l app/src/main/assets/wake
 
       - name: Build debug APK
+        shell: bash
         run: |
           cd "$PROJECT_DIR"
           chmod +x ./gradlew
